@@ -1,29 +1,16 @@
-import tmsicon from "./Images/tms1024.png";
-import { motion } from "motion/react";
-import homeimg from "./Images/Home-removebg-preview.png";
-import homeimgbg from "./Images/Home.jpeg"
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
-import React, {useState, useEffect, useRef} from 'react';
-import axios from 'axios';
+import {motion} from "motion/react";
+import {useNavigate} from "react-router-dom";
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import Button from '@mui/material/Button';
-import MenuIcon from '@mui/icons-material/Menu';
-import Auth from "./Auth";
 import {
     AppBar,
-    Box, Divider, Link,
-    FormControl, FormControlLabel, FormLabel,
-    IconButton, ImageList, ImageListItem,
-    ListItemButton, ListItemIcon, ListItemText,
-    Radio, RadioGroup,
-    TextField,
-    Toolbar,
+    Box, ImageList, ImageListItem,
     Typography
 } from "@mui/material";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Drawer from '@mui/material/Drawer';
+import {ThemeProvider, createTheme} from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'
+import AuthContext from "./AuthContext";
+
 const darkTheme = createTheme({
     palette: {
         mode: 'light',
@@ -31,6 +18,7 @@ const darkTheme = createTheme({
 });
 
 function Home() {
+    const {token} = useContext(AuthContext);
     const itemData = [
         {
             img: 'https://storage.googleapis.com/profit-prod/wp-content/uploads/2022/07/d4eaf149-task-management.jpg',
@@ -75,48 +63,76 @@ function Home() {
 
     ];
     const navigate = useNavigate();
-    const navigateTo = (e) => {
-        navigate("/auth");
+    const navigateToSignUp = (e) => {
+        navigate("/signup");
+    }
+    const navigateToLogin = (e) => {
+        navigate("/login");
+    }
+    const navigateToDashboard = (e) => {
+        navigate("/dashboard");
     }
     return (
         <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
+            <CssBaseline/>
             <React.Fragment>
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                    <Box component="section" sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        m:1, p: 1,
-                        width: 'auto%',
-                        flexDirection: "column",
-                        textAlign: "center",
-                        fontFamily: 'sans-serif',}}>
+                <motion.div initial={{scale: 0}} animate={{scale: 1}}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}>
+                        <Box component="section" sx={{
+                            display: "flow",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            m: 1, p: 1,
+                            width: 'auto%',
+                            maxWidth: 800,
+                            minWidth: 300,
+                            textAlign: "center",
+                            fontFamily: 'sans-serif',
+                        }}>
 
-                        <ImageList variant="masonry" cols={3} gap={8} sx={{mt:10}}>
-                            {itemData.map((item) => (
-                                <ImageListItem key={item.img}>
-                                    <img
-                                        srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                        src={`${item.img}?w=248&fit=crop&auto=format`}
-                                        alt={item.title}
-                                        loading="lazy"
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
+                            <ImageList variant="masonry" cols={3} gap={8} sx={{mt: 10}}>
+                                {itemData.map((item) => (
+                                    <ImageListItem key={item.img}>
+                                        <img
+                                            srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                            src={`${item.img}?w=248&fit=crop&auto=format`}
+                                            alt={item.title}
+                                            loading="lazy"
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
 
-                        <Typography variant={'h4'} sx={{m:3}}>Welcome to Tasks.Web.App</Typography>
+                            <Typography variant={'h4'} sx={{m: 3}}>Welcome to Tasks.Web.App</Typography>
 
-                        <Typography variant={'body1'} sx={{m:2}}>A place where you can create tasks, manage your task and do it on time.</Typography>
+                            <Typography variant={'body1'} sx={{m: 2}}>A place where you can create tasks, manage your
+                                task and do it on time.</Typography>
 
-                        <Typography variant={'body1'} sx={{m:4}}>Sign up, if you are new or login to use.</Typography>
+                            <Typography variant={'body1'} sx={{m: 2}}>Sign up, if you are new or login to
+                                use.</Typography>
 
-                        <Button variant={"outlined"} style={{marginBottom:20}} onClick={navigateTo}>Register</Button>
+                            {token &&
+                                <Button variant={"outlined"} style={{margin: 10, marginBottom: 50, display: "inline"}}
+                                        onClick={navigateToDashboard}>Go To Dashboard</Button>}
 
-                        <Button variant={"outlined"} style={{marginBottom:35}}>Login</Button>
+                            {!token &&
+                                <Button variant={"outlined"} style={{margin: 10, marginBottom: 50, display: "inline"}}
+                                        onClick={navigateToSignUp}>Register</Button>}
 
+                            {!token &&
+                                <Button variant={"outlined"} style={{margin: 10, marginBottom: 50, display: "inline"}}
+                                        onClick={navigateToLogin}>Login</Button>}
+
+
+                        </Box>
                     </Box>
+
                 </motion.div>
             </React.Fragment>
         </ThemeProvider>
